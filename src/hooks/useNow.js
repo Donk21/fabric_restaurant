@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { nowMsk } from "../utils/time.js";
 
-/** Текущее московское время, обновляется раз в `interval` мс. */
+/** Current Moscow time, refreshed every `interval` ms. */
 export function useNow(interval = 60000) {
   const [now, setNow] = useState(nowMsk);
   useEffect(() => {

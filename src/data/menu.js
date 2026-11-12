@@ -1,5 +1,5 @@
-// Меню ресторана «Фабрика» — источник: Яндекс Карты / Яндекс Еда (обновлено 4 октября).
-// Формат позиции: [название, выход, цена ₽, хит?]
+// "Fabrika" restaurant menu — source: Yandex Maps / Yandex Eda (updated October 4).
+// Item format: [name, portion size, price ₽, bestseller?]
 export const MENU = [
   { id: "salads", title: "Салаты", items: [
     ["Оливье с брискетом", "274 г", 660, true],

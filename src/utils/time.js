@@ -3,7 +3,7 @@ import { CONFIG } from "../config.js";
 export const pad = (n) => String(n).padStart(2, "0");
 export const fmtTime = (m) => `${pad(Math.floor(m / 60) % 24)}:${pad(m % 60)}`;
 
-// Время в Ростове-на-Дону (МСК, UTC+3) независимо от часового пояса посетителя
+// Time in Rostov-on-Don (Moscow time, UTC+3) regardless of the visitor's time zone
 export const nowMsk = () => {
   const d = new Date();
   return new Date(d.getTime() + (d.getTimezoneOffset() + 180) * 60000);
@@ -23,7 +23,7 @@ export function plural(n, one, few, many) {
   return many;
 }
 
-/** Статус «открыто / закрыто» на момент `now`. */
+/** Open/closed status at the moment `now`. */
 export function getOpenStatus(now) {
   const mins = minutesOfDay(now);
   const open = mins >= CONFIG.open && mins < CONFIG.close;
@@ -34,7 +34,7 @@ export function getOpenStatus(now) {
   return { open, text };
 }
 
-/** Доступные слоты бронирования (в минутах) на дату `dateStr`. */
+/** Available booking slots (in minutes) for the date `dateStr`. */
 export function availableSlots(dateStr, now = nowMsk()) {
   const isToday = dateStr === isoDate(now);
   const earliest = isToday ? minutesOfDay(now) + CONFIG.leadTime : 0;
@@ -43,7 +43,7 @@ export function availableSlots(dateStr, now = nowMsk()) {
   return slots;
 }
 
-/** Границы дат для брони и дата по умолчанию. */
+/** Booking date bounds and the default date. */
 export function bookingDateRange(now = nowMsk()) {
   const max = new Date(now);
   max.setDate(max.getDate() + CONFIG.bookingDaysAhead);
@@ -52,7 +52,7 @@ export function bookingDateRange(now = nowMsk()) {
   return { min: isoDate(now), max: isoDate(max), defaultDate: isoDate(def) };
 }
 
-/** Выбор времени: сохраняем прежнее, если оно доступно, иначе 19:00, иначе первый слот. */
+/** Time selection: keep the previous one if available, otherwise 19:00, otherwise the first slot. */
 export function pickTime(slots, prev) {
   const times = slots.map(fmtTime);
   if (times.includes(prev)) return prev;

@@ -1,4 +1,4 @@
-// Шестерня — фирменный элемент логотипа. Определяется один раз как SVG-символ.
+// Gear — the brand element from the logo. Defined once as an SVG symbol.
 const TEETH = [0, 36, 72, 108, 144, 180, 216, 252, 288, 324];
 
 export default function GearSprite() {

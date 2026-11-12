@@ -2,6 +2,7 @@
   "name": "fabrika-restaurant",
   "private": true,
   "version": "1.0.0",
+  "description": "Landing page for Fabrika, a restaurant and hookah bar in Rostov-on-Don",
   "type": "module",
   "scripts": {
     "dev": "vite",

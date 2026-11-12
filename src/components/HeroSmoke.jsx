@@ -1,11 +1,11 @@
-// Кальянный дым на первом экране.
-// Клубы — размытые эллипсы, искажённые шумом feTurbulence + feDisplacementMap.
-// Фильтр считается один раз (SVG статичен), анимируются только transform/opacity
-// у обёрток, поэтому эффект дешёвый даже на телефонах.
+// Hookah smoke in the hero section.
+// Puffs are blurred ellipses distorted by feTurbulence + feDisplacementMap noise.
+// The filter is rasterized once (the SVG is static); only transform/opacity of the
+// wrappers are animated, so the effect stays cheap even on phones.
 
 const LAYERS = [
   {
-    // Тёплый дым, подсвеченный лампами Эдисона — низ экрана
+    // Warm smoke lit by Edison bulbs — bottom of the screen
     color: "#f0c48e",
     freq: "0.009 0.016",
     seed: 4,
@@ -17,7 +17,7 @@ const LAYERS = [
     ],
   },
   {
-    // Клуб, подсвеченный бирюзовым неоном, поднимается справа
+    // Puff lit by turquoise neon, rising on the right
     color: "#3de0e8",
     freq: "0.011 0.02",
     seed: 11,
@@ -28,7 +28,7 @@ const LAYERS = [
     ],
   },
   {
-    // Тонкие завитки у верхнего края
+    // Thin wisps along the top edge
     color: "#ddd6cc",
     freq: "0.014 0.026",
     seed: 27,

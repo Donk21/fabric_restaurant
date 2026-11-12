@@ -1,19 +1,19 @@
 <?php
 /**
- * Ежедневное обновление рейтинга «Фабрики» из Яндекс Карт.
- * PHP-версия scripts/fetch-yandex-rating.mjs для обычного хостинга (Beget, Timeweb и т.п.).
+ * Daily refresh of the "Fabrika" rating from Yandex Maps.
+ * PHP port of scripts/fetch-yandex-rating.mjs for shared hosting (Beget, Timeweb, etc.).
  *
- * Запуск (из планировщика cron в панели хостинга):
- *   php /путь/к/update-rating.php /путь/к/сайту/rating.json
+ * Run from the hosting control panel's cron scheduler:
+ *   php /path/to/update-rating.php /path/to/site/rating.json
  *
- * ВАЖНО: кладите этот файл ВНЕ папки сайта (не в public_html), чтобы его
- * нельзя было дёрнуть из браузера.
+ * IMPORTANT: put this file OUTSIDE the site's web root (not in public_html)
+ * so it can't be triggered from a browser.
  *
- * Если Яндекс не ответил, показал капчу или поменял разметку — старый rating.json
- * остаётся как есть, на сайте продолжают показываться последние полученные цифры.
+ * If Yandex doesn't respond, serves a captcha or changes its markup, the old
+ * rating.json is left untouched and the site keeps showing the last known numbers.
  */
 
-const ORG_ID = '178860656686'; // то же, что CONFIG.yandexOrgId в src/config.js
+const ORG_ID = '178860656686'; // same as CONFIG.yandexOrgId in src/config.js
 const TIMEOUT = 20;
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36';
 
@@ -43,7 +43,7 @@ function fetchPage(string $url): string
         $html = curl_exec($ch);
         $code = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $err = curl_error($ch);
-        if ($html === false) throw new RuntimeException("сеть: $err");
+        if ($html === false) throw new RuntimeException("network error: $err");
         if ($code !== 200) throw new RuntimeException("HTTP $code");
         return $html;
     }
@@ -54,14 +54,14 @@ function fetchPage(string $url): string
         'follow_location' => 1,
     ]]);
     $html = @file_get_contents($url, false, $ctx);
-    if ($html === false) throw new RuntimeException('не удалось загрузить страницу');
+    if ($html === false) throw new RuntimeException('failed to load the page');
     return $html;
 }
 
 function parseRating(string $html): array
 {
     $start = stripos($html, 'itemprop="aggregateRating"');
-    if ($start === false) throw new RuntimeException('блок aggregateRating не найден (капча или изменилась разметка)');
+    if ($start === false) throw new RuntimeException('aggregateRating block not found (captcha or markup changed)');
     $block = substr($html, $start, 800);
 
     $meta = function (string $name) use ($block): ?string {
@@ -73,8 +73,8 @@ function parseRating(string $html): array
     $reviewCount = $meta('reviewCount');
     $bestRating = (float) ($meta('bestRating') ?: 5);
 
-    if ($ratingValue < 1 || $ratingValue > $bestRating) throw new RuntimeException('странный рейтинг: ' . $meta('ratingValue'));
-    if ($ratingCount <= 0) throw new RuntimeException('странное число оценок: ' . $meta('ratingCount'));
+    if ($ratingValue < 1 || $ratingValue > $bestRating) throw new RuntimeException('unexpected rating: ' . $meta('ratingValue'));
+    if ($ratingCount <= 0) throw new RuntimeException('unexpected rating count: ' . $meta('ratingCount'));
 
     return [
         'ratingValue' => $ratingValue,
@@ -88,31 +88,31 @@ function parseRating(string $html): array
 
 $out = $argv[1] ?? null;
 if (!$out) {
-    logMsg('укажите путь к rating.json: php update-rating.php /путь/к/сайту/rating.json');
+    logMsg('pass the path to rating.json: php update-rating.php /path/to/site/rating.json');
     exit(1);
 }
 if (!is_dir(dirname($out))) {
-    logMsg('папка не найдена: ' . dirname($out));
+    logMsg('directory not found: ' . dirname($out));
     exit(1);
 }
 
 try {
     $data = parseRating(fetchPage('https://yandex.ru/maps/org/' . ORG_ID . '/'));
 } catch (Throwable $e) {
-    logMsg($e->getMessage() . '. Оставляю прежние данные.');
+    logMsg($e->getMessage() . '. Keeping previous data.');
     exit(0);
 }
 
 $prev = is_file($out) ? json_decode((string) file_get_contents($out), true) : null;
 
-// Пишем во временный файл и переименовываем, чтобы посетитель не получил полузаписанный JSON
+// Write to a temp file and rename, so a visitor never gets a half-written JSON
 $tmp = $out . '.tmp';
 $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
 if (file_put_contents($tmp, $json) === false || !rename($tmp, $out)) {
     @unlink($tmp);
-    logMsg('не удалось записать ' . $out . ' (проверьте права на папку)');
+    logMsg('failed to write ' . $out . ' (check directory permissions)');
     exit(1);
 }
 
-$was = $prev ? sprintf(' (было %s, %s оценок)', $prev['ratingValue'] ?? '?', $prev['ratingCount'] ?? '?') : '';
-logMsg(sprintf('%s ★, %d оценок, %s отзывов%s → %s', $data['ratingValue'], $data['ratingCount'], $data['reviewCount'] ?? '?', $was, $out));
+$was = $prev ? sprintf(' (was %s, %s ratings)', $prev['ratingValue'] ?? '?', $prev['ratingCount'] ?? '?') : '';
+logMsg(sprintf('%s ★, %d ratings, %s reviews%s → %s', $data['ratingValue'], $data['ratingCount'], $data['reviewCount'] ?? '?', $was, $out));

@@ -1,4 +1,4 @@
-// Маска телефона +7 (XXX) XXX-XX-XX
+// Phone mask +7 (XXX) XXX-XX-XX
 export function formatPhone(value) {
   let d = value.replace(/\D/g, "");
   if (!d) return "";

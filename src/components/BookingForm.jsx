@@ -59,7 +59,7 @@ async function submitBooking(data) {
     all.push(data);
     localStorage.setItem("fabrika-bookings", JSON.stringify(all));
   } catch {
-    /* хранилище недоступно — не критично */
+    /* storage unavailable — not critical */
   }
   return sent;
 }
@@ -73,7 +73,7 @@ export default function BookingForm({ onSubmitted }) {
 
   const slots = availableSlots(values.date);
 
-  // Фокус на первое поле с ошибкой после неудачной отправки
+  // Focus the first invalid field after a failed submit
   useEffect(() => {
     if (focusTick) formRef.current?.querySelector(".has-error input, .has-error select")?.focus();
   }, [focusTick]);

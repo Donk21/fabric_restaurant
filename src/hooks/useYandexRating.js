@@ -7,9 +7,9 @@ const FALLBACK = {
 };
 
 /**
- * Рейтинг из Яндекс Карт. Файл rating.json обновляет scripts/fetch-yandex-rating.mjs
- * (автоматически перед сборкой или по cron). Пока файл грузится или если он
- * недоступен — показываем значения из CONFIG.ratingFallback.
+ * Rating from Yandex Maps. rating.json is refreshed by scripts/fetch-yandex-rating.mjs
+ * (automatically before each build) or deploy/update-rating.php (daily via cron).
+ * While the file is loading or if it is unavailable, CONFIG.ratingFallback is shown.
  */
 export function useYandexRating() {
   const [rating, setRating] = useState(FALLBACK);
@@ -21,7 +21,7 @@ export function useYandexRating() {
       .then((data) => {
         if (data?.ratingValue > 0 && data?.ratingCount > 0) setRating({ ...FALLBACK, ...data });
       })
-      .catch(() => { /* остаёмся на запасных значениях */ });
+      .catch(() => { /* keep the fallback values */ });
     return () => ctrl.abort();
   }, []);
 

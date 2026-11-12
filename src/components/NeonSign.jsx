@@ -1,5 +1,5 @@
-// Неоновая вывеска: светящаяся «трубка» с редким мерцанием.
-// Мерцают отдельные буквы, как у настоящей неоновой вывески с уставшим участком трубки.
+// Neon sign: a glowing "tube" with an occasional flicker.
+// Only selected letters flicker, like a real neon sign with a worn-out tube section.
 export default function NeonSign({ children, flickerAt = [] }) {
   const text = String(children);
   return (

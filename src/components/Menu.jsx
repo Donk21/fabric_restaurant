@@ -45,7 +45,7 @@ export default function Menu() {
           <MenuTabs tabs={TABS} activeTab={activeTab} highlight={!query} onSelect={selectTab} />
           <MenuSearch value={query} onChange={setQuery} />
         </div>
-        {/* key перезапускает анимацию появления карточек при смене вкладки/поиска */}
+        {/* key restarts the card entrance animation when the tab or search changes */}
         <div className="menu-grid" role="tabpanel" aria-live="polite" key={`${activeTab}|${query}`}>
           {list.length ? (
             list.map(({ dish, category }, i) => (

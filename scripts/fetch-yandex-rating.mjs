@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-// Забирает рейтинг и количество отзывов организации со страницы Яндекс Карт
-// (разметка schema.org AggregateRating) и сохраняет в JSON для сайта.
+// Fetches the organization's rating and review count from its Yandex Maps page
+// (schema.org AggregateRating markup) and saves them as JSON for the site.
 //
-// Использование:
-//   node scripts/fetch-yandex-rating.mjs                 → public/rating.json (перед сборкой)
-//   node scripts/fetch-yandex-rating.mjs --out dist/rating.json   → обновить уже выложенный сайт (для cron)
+// Usage:
+//   node scripts/fetch-yandex-rating.mjs                         → public/rating.json (before build)
+//   node scripts/fetch-yandex-rating.mjs --out dist/rating.json  → update an already deployed site (for cron)
 //
-// Если Яндекс не ответил, показал капчу или поменял разметку — старый файл
-// остаётся как есть, скрипт завершается с кодом 0 и не ломает сборку.
+// If Yandex doesn't respond, serves a captcha or changes its markup, the old file
+// is left untouched and the script exits with code 0 so the build never breaks.
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
@@ -22,7 +22,7 @@ const log = (msg) => console.log(`[rating] ${msg}`);
 
 function parse(html) {
   const start = html.search(/itemprop="aggregateRating"/i);
-  if (start === -1) throw new Error("блок aggregateRating не найден (капча или изменилась разметка)");
+  if (start === -1) throw new Error("aggregateRating block not found (captcha or markup changed)");
   const block = html.slice(start, start + 800);
   const meta = (name) => block.match(new RegExp(`itemprop="${name}"\\s+content="([^"]+)"`, "i"))?.[1];
 
@@ -31,8 +31,8 @@ function parse(html) {
   const reviewCount = parseInt(meta("reviewCount"), 10);
   const bestRating = parseFloat(meta("bestRating")) || 5;
 
-  if (!(ratingValue >= 1 && ratingValue <= bestRating)) throw new Error(`странный рейтинг: ${meta("ratingValue")}`);
-  if (!(ratingCount > 0)) throw new Error(`странное число оценок: ${meta("ratingCount")}`);
+  if (!(ratingValue >= 1 && ratingValue <= bestRating)) throw new Error(`unexpected rating: ${meta("ratingValue")}`);
+  if (!(ratingCount > 0)) throw new Error(`unexpected rating count: ${meta("ratingCount")}`);
 
   return {
     ratingValue,
@@ -58,7 +58,7 @@ async function main() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     html = await res.text();
   } catch (e) {
-    log(`не удалось загрузить страницу: ${e.message}. Оставляю прежние данные.`);
+    log(`failed to load the page: ${e.message}. Keeping previous data.`);
     return;
   }
 
@@ -66,7 +66,7 @@ async function main() {
   try {
     data = parse(html);
   } catch (e) {
-    log(`${e.message}. Оставляю прежние данные.`);
+    log(`${e.message}. Keeping previous data.`);
     return;
   }
 
@@ -74,8 +74,8 @@ async function main() {
   await mkdir(dirname(OUT), { recursive: true });
   await writeFile(OUT, JSON.stringify(data, null, 2) + "\n");
 
-  const was = prev ? ` (было ${prev.ratingValue}, ${prev.ratingCount} оценок)` : "";
-  log(`${data.ratingValue} ★, ${data.ratingCount} оценок, ${data.reviewCount} отзывов${was} → ${OUT}`);
+  const was = prev ? ` (was ${prev.ratingValue}, ${prev.ratingCount} ratings)` : "";
+  log(`${data.ratingValue} ★, ${data.ratingCount} ratings, ${data.reviewCount} reviews${was} → ${OUT}`);
 }
 
-main().catch((e) => log(`ошибка: ${e.message}`));
+main().catch((e) => log(`error: ${e.message}`));

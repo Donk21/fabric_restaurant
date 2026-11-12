@@ -1,21 +1,21 @@
-// ===== Настройки =====
+// ===== Settings =====
 export const CONFIG = {
   open: 12 * 60,          // 12:00
   close: 24 * 60,         // 00:00
-  lastBooking: 23 * 60,   // последняя бронь
-  slotStep: 30,           // шаг слотов, мин
-  leadTime: 30,           // бронь не раньше чем через N минут
-  bookingDaysAhead: 60,   // на сколько дней вперёд можно бронировать
+  lastBooking: 23 * 60,   // last bookable slot
+  slotStep: 30,           // slot step, minutes
+  leadTime: 30,           // earliest booking is N minutes from now
+  bookingDaysAhead: 60,   // how many days ahead booking is allowed
   minGuests: 1,
   maxGuests: 12,
   phone: "79885402999",
   phoneDisplay: "+7 (988) 540-29-99",
-  // ID организации в Яндекс Картах (из ссылки yandex.ru/maps/org/fabrika/<ID>/)
+  // Organization ID on Yandex Maps (from the link yandex.ru/maps/org/fabrika/<ID>/)
   yandexOrgId: "178860656686",
-  // Рейтинг на случай, если rating.json не загрузился
+  // Rating shown if rating.json fails to load
   ratingFallback: { ratingValue: 5.0, ratingCount: 160, reviewCount: 126 },
-  // URL вашего обработчика заявок (CRM, Telegram-бот, форма и т.п.).
-  // Пусто — заявка оформляется локально и отправляется администратору через WhatsApp.
+  // URL of your booking handler (CRM, Telegram bot, form service, etc.).
+  // Empty — the booking is handled locally and sent to the manager via WhatsApp.
   endpoint: "",
 };
 
