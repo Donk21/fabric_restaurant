@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <!-- Placeholder dish photo: plate with fork and knife on a dark steel background -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="75%">
+      <stop offset="0" stop-color="#30343a"/>
+      <stop offset="1" stop-color="#18191b"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#e9a14a" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#e9a14a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <circle cx="200" cy="150" r="130" fill="url(#glow)"/>
+  <g fill="none" stroke="#5b6168" stroke-width="3">
+    <circle cx="200" cy="150" r="78"/>
+    <circle cx="200" cy="150" r="56" stroke-dasharray="4 7"/>
+  </g>
+  <g fill="none" stroke="#9a9fa5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- fork -->
+    <path d="M92 92v36a12 12 0 0 0 24 0V92M104 92v116"/>
+    <!-- knife -->
+    <path d="M300 208V92c-12 8-18 26-18 50h18"/>
+  </g>
+  <text x="200" y="157" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" letter-spacing="3" fill="#9a9fa5">ФОТО СКОРО</text>
+</svg>

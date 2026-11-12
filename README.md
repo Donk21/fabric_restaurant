@@ -6,7 +6,7 @@ Built with React and Vite as a static site that can be hosted anywhere. The site
 ## Features
 
 - **Hero section** with an animated hookah-smoke background (SVG `feTurbulence` + `feDisplacementMap`), a flickering turquoise neon sign and a live open/closed status in Moscow time.
-- **Menu** with category tabs, a "bestsellers" tab and accent-insensitive search (`е`/`ё`) across all dishes.
+- **Menu page** (`menu.html`): dish cards with photo, name, portion and price, grouped by category, with a sticky category bar that follows scrolling and accent-insensitive search (`е`/`ё`). The landing shows a bestsellers preview that links to it.
 - **Table booking form**:
   - time slots generated from opening hours, with lead time and the last bookable slot taken into account;
   - phone input mask `+7 (XXX) XXX-XX-XX`, inline validation and a guest stepper;
@@ -47,21 +47,25 @@ The dev server runs at http://localhost:5173. To open the site from a phone on t
 ## Project structure
 
 ```
-index.html                 HTML shell: meta tags, fonts, #root
+index.html                 landing page shell: meta tags, fonts, #root
+menu.html                  menu page shell
 public/
   assets/                  photos and logo
+  assets/dishes/           dish photos; placeholder.svg is shown until a dish has one
   rating.json              Yandex Maps rating (auto-generated)
 src/
-  main.jsx                 entry point
+  main.jsx                 landing entry point
+  menu.jsx                 menu page entry point
+  api/menu.js              fetchMenu(): the single source of menu data (swap for a DB/API call later)
   App.jsx                  page layout
   config.js                opening hours, booking rules, phone, Yandex org ID, booking endpoint
   data/menu.js             menu items
-  hooks/                   useNow (Moscow time ticker), useYandexRating
+  hooks/                   useNow (Moscow time ticker), useYandexRating, useMenu
   utils/                   time & booking slot helpers, phone mask
   styles/style.css         all styles
   components/              one component per file:
     Header, Hero, HeroSmoke, NeonSign, OpenStatus,
-    About, Menu, MenuTabs, MenuSearch, DishCard,
+    About, Menu, MenuPage, CategoryNav, MenuSearch, DishCard,
     Hours, Schedule, Booking, BookingForm, FormField,
     GuestStepper, Checkbox, BookingModal,
     Contacts, Footer, Gear, GearSprite
@@ -86,7 +90,7 @@ Most settings live in [`src/config.js`](src/config.js):
 | `ratingFallback` | Rating shown if `rating.json` can't be loaded |
 | `endpoint` | URL that receives bookings as JSON via POST. Leave empty to rely on WhatsApp only |
 
-The menu is edited in [`src/data/menu.js`](src/data/menu.js); each item is `[name, portion, price, bestseller?]`.
+The menu is edited in [`src/data/menu.js`](src/data/menu.js); each dish is `{ id, name, weight, price, hit, image }`. Set `image` to a URL (for example `assets/dishes/ribs.jpg`) to show a photo; `null` shows the placeholder. Components read the menu only through `fetchMenu()` in [`src/api/menu.js`](src/api/menu.js), so moving the menu to a database means changing that one function.
 
 ## Yandex Maps rating
 

@@ -4,7 +4,8 @@ import Gear from "./Gear.jsx";
 
 // Sticky bottom bar on phones: keeps "Book a table" within thumb reach from the first screen.
 // Slides away while the booking section is on screen so it never covers the form.
-export default function MobileBookingBar({ targetId = "booking" }) {
+// `href` overrides the link target on pages without the booking section (the bar then stays visible).
+export default function MobileBookingBar({ targetId = "booking", href = `#${targetId}` }) {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function MobileBookingBar({ targetId = "booking" }) {
 
   return (
     <div className={`mbar${hidden ? " is-hidden" : ""}`} inert={hidden}>
-      <a href={`#${targetId}`} className="btn btn--accent mbar__book">
+      <a href={href} className="btn btn--accent mbar__book">
         <Gear className="btn__gear" />
         <span>Забронировать столик</span>
       </a>
