@@ -10,6 +10,7 @@ import Booking from "./components/Booking.jsx";
 import Contacts from "./components/Contacts.jsx";
 import Footer from "./components/Footer.jsx";
 import BookingModal from "./components/BookingModal.jsx";
+import MobileBookingBar from "./components/MobileBookingBar.jsx";
 
 export default function App() {
   const now = useNow();
@@ -31,6 +32,7 @@ export default function App() {
         <Contacts />
       </main>
       <Footer year={now.getFullYear()} />
+      <MobileBookingBar />
       <BookingModal booking={booking} onClose={closeModal} />
     </>
   );
