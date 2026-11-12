@@ -317,6 +317,14 @@ a { color: inherit; }
   transition: border-color .2s;
 }
 .field textarea { resize: vertical; }
+/* iOS Safari: native date input ignores width:100% and overflows its container */
+@supports (-webkit-touch-callout: none) {
+  .field input[type="date"] {
+    -webkit-appearance: none; appearance: none;
+    display: block; min-width: 0; max-width: 100%; min-height: 46px; text-align: left;
+  }
+  .field input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+}
 .field input:hover, .field select:hover, .field textarea:hover { border-color: #5b6168; }
 .field.has-error input, .field.has-error select { border-color: var(--bad); }
 .err { color: var(--bad); font-size: 12px; min-height: 0; }
@@ -370,9 +378,11 @@ a { color: inherit; }
   .nav {
     position: fixed; inset: 68px 0 auto 0; flex-direction: column; gap: 0;
     background: var(--graphite); border-bottom: 1px solid var(--line);
-    transform: translateY(-120%); transition: transform .3s; z-index: -1;
+    transform: translateY(-120%); z-index: -1;
+    /* Fully hide when closed: the translucent header otherwise lets the menu's edge show through */
+    visibility: hidden; transition: transform .3s, visibility 0s .3s;
   }
-  .nav.is-open { transform: none; }
+  .nav.is-open { transform: none; visibility: visible; transition: transform .3s; }
   .nav a { padding: 16px var(--pad); border-top: 1px solid var(--line); font-size: 16px; color: var(--text); }
   .burger { display: block; }
   .hero__inner, .about, .hours, .booking, .contacts { grid-template-columns: minmax(0, 1fr); }
@@ -397,6 +407,8 @@ a { color: inherit; }
   /* Reserve space so the bar never covers the footer */
   body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
   .form__grid { grid-template-columns: 1fr; }
+  /* 16px+ prevents iOS Safari from zooming in when a field is focused */
+  .field input:not([type="checkbox"]), .field select, .field textarea, .menu-search input { font-size: 16px; }
   .facts { grid-template-columns: 1fr; }
   .about__gallery { height: 420px; }
   .hero__actions .btn { flex: 1 1 100%; }
