@@ -23,14 +23,28 @@ export function plural(n, one, few, many) {
   return many;
 }
 
+/** Time without a leading zero in hours: 0:00, 9:30, 12:00. */
+export const fmtClock = (m) => `${Math.floor(m / 60) % 24}:${pad(m % 60)}`;
+
+/** Human-readable duration: "40 мин", "1 ч", "8 ч 20 мин". */
+export function fmtDuration(totalMin) {
+  const h = Math.floor(totalMin / 60), m = totalMin % 60;
+  if (!h) return `${m} мин`;
+  return m ? `${h} ч ${m} мин` : `${h} ч`;
+}
+
 /** Open/closed status at the moment `now`. */
 export function getOpenStatus(now) {
   const mins = minutesOfDay(now);
   const open = mins >= CONFIG.open && mins < CONFIG.close;
-  const left = CONFIG.close - mins;
   let text;
-  if (open) text = left <= 60 ? `Открыто · закроемся через ${left} мин` : "Открыто сейчас · до 00:00";
-  else text = `Закрыто · откроемся в ${fmtTime(CONFIG.open)}`;
+  if (open) {
+    const left = CONFIG.close - mins;
+    text = left <= 60 ? `Работаем ещё ${fmtDuration(left)}` : `Работаем до ${fmtClock(CONFIG.close)}`;
+  } else {
+    const until = mins < CONFIG.open ? CONFIG.open - mins : 24 * 60 - mins + CONFIG.open;
+    text = `Откроемся через ${fmtDuration(until)}`;
+  }
   return { open, text };
 }
 
