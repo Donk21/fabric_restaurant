@@ -1,0 +1,14 @@
+# Зависимости и сборка
+node_modules
+dist
+release
+
+# Локальные настройки
+.claude/settings.local.json
+.env
+.env.*
+
+# Системное и логи
+.DS_Store
+Thumbs.db
+*.log
