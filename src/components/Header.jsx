@@ -4,6 +4,7 @@ import { useState } from "react";
 const NAV_LINKS = [
   { href: "#about", label: "О нас" },
   { href: "menu.html", label: "Меню", page: "menu" },
+  { href: "#reviews", label: "Отзывы" },
   { href: "#hours", label: "Режим работы" },
   { href: "#contacts", label: "Контакты" },
 ];

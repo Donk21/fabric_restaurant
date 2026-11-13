@@ -270,7 +270,26 @@ a { color: inherit; }
 }
 .menu-search { flex: 0 0 auto; }
 .menu-empty { color: var(--muted); padding: 30px 0; }
-.menu-cta { margin-top: 36px; display: flex; justify-content: center; }
+.menu-cta, .section__cta { margin-top: 36px; display: flex; justify-content: center; }
+
+/* ===== Reviews ===== */
+.reviews { list-style: none; margin: 0; padding: 0; columns: 3 300px; column-gap: 20px; }
+.review {
+  break-inside: avoid; margin-bottom: 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 22px 22px 20px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--steel), var(--graphite));
+}
+.review__stars { color: var(--amber); font-size: 18px; letter-spacing: 2px; line-height: 1; }
+.review__stars-off { color: var(--line); }
+.review__text { margin: 0; color: #cfcbc5; white-space: pre-line; line-height: 1.55; }
+.review__meta { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.review__avatar {
+  flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+  background: var(--steel-2); border: 1px solid var(--line); color: var(--amber-2); font: 400 17px/1 var(--display);
+}
+.review__author { display: block; font-weight: 700; color: var(--text); }
+.review__date { display: block; font-size: 13px; color: var(--muted); }
 
 /* Dish cards: photo, name, portion and price */
 .dish-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }

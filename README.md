@@ -14,6 +14,7 @@ Built with React and Vite as a static site that can be hosted anywhere. The site
   - an optional POST to your own endpoint (CRM, Telegram bot, etc.).
 - **Opening hours** table that highlights the current day.
 - **Yandex Maps rating**: the rating and review count are pulled from the organization's public Yandex Maps page, before every build and daily via cron on the hosting.
+- **Guest reviews**: the five newest 5-star reviews from Yandex Maps (real ones, fetched before every build) and a button to all reviews on Yandex Maps.
 - **Contacts** with an embedded Yandex map.
 - Responsive layout; animations are disabled for users with `prefers-reduced-motion`.
 
@@ -40,9 +41,10 @@ The dev server runs at http://localhost:5173. To open the site from a phone on t
 | Command | Description |
 |---|---|
 | `npm run dev` | Start the dev server with hot reload |
-| `npm run build` | Fetch the latest rating, then build the production site into `dist/` |
+| `npm run build` | Fetch the latest rating and reviews, then build the production site into `dist/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run rating` | Fetch the rating from Yandex Maps into `public/rating.json` |
+| `npm run reviews` | Fetch guest reviews from Yandex Maps into `public/reviews.json` |
 
 ## Project structure
 
@@ -53,6 +55,7 @@ public/
   assets/                  photos and logo
   assets/dishes/           dish photos; placeholder.svg is shown until a dish has one
   rating.json              Yandex Maps rating (auto-generated)
+  reviews.json             Yandex Maps guest reviews (auto-generated)
 src/
   main.jsx                 landing entry point
   menu.jsx                 menu page entry point

@@ -5,6 +5,7 @@ import Header from "./components/Header.jsx";
 import Hero from "./components/Hero.jsx";
 import About from "./components/About.jsx";
 import Menu from "./components/Menu.jsx";
+import Reviews from "./components/Reviews.jsx";
 import Hours from "./components/Hours.jsx";
 import Booking from "./components/Booking.jsx";
 import Contacts from "./components/Contacts.jsx";
@@ -27,6 +28,7 @@ export default function App() {
         <Hero now={now} />
         <About />
         <Menu />
+        <Reviews />
         <Hours now={now} />
         <Booking onSubmitted={handleSubmitted} />
         <Contacts />
