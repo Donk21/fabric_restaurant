@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMenu } from "../hooks/useMenu.js";
 import GearSprite from "./GearSprite.jsx";
 import Header from "./Header.jsx";
@@ -18,10 +18,31 @@ function filterMenu(categories, query) {
     .filter((c) => c.items.length);
 }
 
-/** Tracks which category section is currently under the sticky toolbar. */
+/**
+ * Tracks which category section is currently under the sticky toolbar.
+ * select(id) marks a chip active right away and pauses the scroll-spy until the
+ * page stops scrolling, so the bar doesn't flick through every section on the way.
+ */
 function useActiveSection(ids) {
   const [active, setActive] = useState(ids[0]);
+  const locked = useRef(false);
   const key = ids.join("|");
+
+  const select = useCallback((id) => {
+    setActive(id);
+    locked.current = true;
+    let timer;
+    const release = () => {
+      locked.current = false;
+      window.removeEventListener("scroll", onScroll);
+    };
+    const onScroll = () => {
+      clearTimeout(timer);
+      timer = setTimeout(release, 150);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    timer = setTimeout(release, 400); // in case the page doesn't need to scroll at all
+  }, []);
 
   useEffect(() => {
     if (!ids.length) return;
@@ -31,6 +52,7 @@ function useActiveSection(ids) {
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => (e.isIntersecting ? visible.add(e.target.dataset.id) : visible.delete(e.target.dataset.id)));
+        if (locked.current) return;
         const first = ids.find((id) => visible.has(id));
         if (first) setActive(first);
       },
@@ -45,14 +67,14 @@ function useActiveSection(ids) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
-  return active;
+  return [active, select];
 }
 
 export default function MenuPage() {
   const { status, categories } = useMenu();
   const [query, setQuery] = useState("");
   const shown = useMemo(() => filterMenu(categories, query), [categories, query]);
-  const active = useActiveSection(shown.map((c) => c.id));
+  const [active, selectSection] = useActiveSection(shown.map((c) => c.id));
   const total = categories.reduce((n, c) => n + c.items.length, 0);
 
   return (
@@ -73,7 +95,7 @@ export default function MenuPage() {
 
         <div className="menu-bar">
           <div className="wrap menu-bar__inner">
-            <CategoryNav categories={shown} activeId={active} />
+            <CategoryNav categories={shown} activeId={active} onSelect={selectSection} />
             <MenuSearch value={query} onChange={setQuery} />
           </div>
         </div>
