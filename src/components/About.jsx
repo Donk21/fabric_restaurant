@@ -15,9 +15,10 @@ function ratingFact({ ratingValue, ratingCount, reviewCount, url }) {
   };
 }
 
+// Odd count: the last item spans the full row
 const TAGS = [
   "Кальяны", "Спортивные трансляции", "Wi-Fi", "Парковка",
-  "Доставка и навынос", "Можно с собаками до 35 см", "Банкеты и корпоративы",
+  "Доставка и навынос", "Банкеты и корпоративы", "Можно с собаками до 35 см",
 ];
 
 const PHOTOS = [
@@ -45,7 +46,7 @@ export default function About() {
               <li key={i}><b>{f.value}</b><span>{f.label}</span></li>
             ))}
           </ul>
-          <ul className="tags">
+          <ul className="tags" aria-label="Удобства">
             {TAGS.map((t) => <li key={t}>{t}</li>)}
           </ul>
         </div>
