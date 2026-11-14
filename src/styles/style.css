@@ -512,8 +512,10 @@ a { color: inherit; }
 .hours__big span { display: block; font-size: clamp(40px, 6vw, 72px); color: var(--text); line-height: 1.05; }
 .status--block { font-size: 15px; padding: 14px 20px; }
 .status--block .status__dot { width: 12px; height: 12px; }
-.schedule { width: 100%; border-collapse: collapse; background: rgba(0,0,0,.45); border: 1px solid var(--line); }
+.schedule { overflow: hidden; background: rgba(0,0,0,.45); border: 1px solid var(--line); border-radius: var(--radius); }
+.schedule__table { width: 100%; border-collapse: collapse; }
 .schedule td { padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.schedule tr:last-child td { border-bottom: 0; }
 .schedule td:last-child { text-align: right; font-family: var(--display); letter-spacing: .04em; }
 .schedule tr.is-today td { background: rgba(233,161,74,.12); color: var(--amber-2); }
 .schedule tr.is-today td:first-child::after { content: " · сегодня"; font-size: 12px; color: var(--amber); }
@@ -637,6 +639,7 @@ a { color: inherit; }
   /* 16px+ prevents iOS Safari from zooming in when a field is focused */
   .field input:not([type="checkbox"]), .field select, .field textarea, .menu-search input { font-size: 16px; }
   .facts { grid-template-columns: 1fr; }
+  .schedule td { padding: 13px 14px; }
   .tags li { font-size: 13px; padding: 10px 12px; gap: 8px; }
   /* Phones: the strip bleeds to the screen edges; the photo itself fills a 3:4 card */
   .strip__list { margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); scroll-padding-inline: var(--pad); }
