@@ -21,7 +21,7 @@ function ratingFact({ ratingValue, ratingCount, reviewCount, url }) {
 // With an odd count the last item spans the full row
 const TAGS = [
   "Wi-Fi", "Кальяны", "Доставка и навынос", "Бесплатная парковка",
-  "Спортивные трансляции", "Банкеты и корпоративы", "Можно с собаками до 35 см", "Есть отдельные VIP-комнаты"
+  "Спортивные трансляции", "Банкеты и корпоративы", "Можно с собаками до 35 см", "Отдельные VIP-комнаты"
 ];
 
 // Scale "лофт" so it is exactly as wide as "Индустриальный". Both lines use the

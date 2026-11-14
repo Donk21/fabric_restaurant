@@ -24,7 +24,7 @@ export default function Hero({ now }) {
           </p>
           <OpenStatus now={now} live />
           <div className="hero__actions">
-            <a href="#booking" className="btn btn--accent">Забронировать столик</a>
+            <a href="#booking" className="btn btn--accent hero__book">Забронировать столик</a>
             <a href="menu.html" className="btn btn--ghost">Меню</a>
           </div>
         </div>

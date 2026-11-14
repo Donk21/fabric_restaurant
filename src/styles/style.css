@@ -648,6 +648,8 @@ a { color: inherit; }
   .lightbox__arrow { display: none; }
   .lightbox__stage { padding: 64px 10px 10px; }
   .hero__actions .btn { flex: 1 1 100%; }
+  /* Phones get the sticky bottom bar instead; two booking buttons on one screen is noise */
+  .hero__book { display: none; }
   /* Category bar: chips on the first row, full-width search on the second */
   .menu-bar__inner { flex-wrap: wrap; gap: 10px; padding-block: 10px; }
   .cat-nav { flex: 1 1 100%; margin-inline: calc(var(--pad) * -1); }
