@@ -1,5 +1,8 @@
+import { useLayoutEffect, useRef } from "react";
 import { useYandexRating } from "../hooks/useYandexRating.js";
 import { plural } from "../utils/time.js";
+import { PHOTOS } from "../data/photos.js";
+import PhotoStrip from "./PhotoStrip.jsx";
 
 const STATIC_FACTS = [
   { value: "2026", label: "«Хорошее место» по версии Яндекса" },
@@ -15,20 +18,35 @@ function ratingFact({ ratingValue, ratingCount, reviewCount, url }) {
   };
 }
 
-// Odd count: the last item spans the full row
+// With an odd count the last item spans the full row
 const TAGS = [
   "Wi-Fi", "Кальяны", "Доставка и навынос", "Бесплатная парковка",
   "Спортивные трансляции", "Банкеты и корпоративы", "Можно с собаками до 35 см", "Есть отдельные VIP-комнаты"
 ];
 
-const PHOTOS = [
-  { src: "assets/photo4.jpg", alt: "Интерьер ресторана: стальные балки, лампы Эдисона и мотоцикл под потолком", tall: true },
-  { src: "assets/interior2.jpg", alt: "Рёбра, мясная нарезка и пиво на деревянных досках" },
-  { src: "assets/photo3.jpg", alt: "Капучино и салат из свежих овощей" },
-];
+// Scale "лофт" so it is exactly as wide as "Индустриальный". Both lines use the
+// same font, so the ratio does not depend on the viewport: measure once at 1em
+// and again after the web font loads.
+function useFitWidth() {
+  const topRef = useRef(null);
+  const fitRef = useRef(null);
+  useLayoutEffect(() => {
+    const fit = () => {
+      const top = topRef.current, word = fitRef.current;
+      if (!top || !word) return;
+      word.style.setProperty("--fit", "1");
+      const ratio = top.getBoundingClientRect().width / word.getBoundingClientRect().width;
+      word.style.setProperty("--fit", String(ratio));
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+  }, []);
+  return [topRef, fitRef];
+}
 
 export default function About() {
   const rating = useYandexRating();
+  const [titleTopRef, titleFitRef] = useFitWidth();
   const facts = [ratingFact(rating), ...STATIC_FACTS];
 
   return (
@@ -36,11 +54,16 @@ export default function About() {
       <div className="wrap about">
         <div className="about__text">
           <p className="eyebrow">Цех №1 · О нас</p>
-          <h2 className="h2">Индустриальный лофт <br />на втором этаже</h2>
+          <h2 className="h2 about__title">
+            <span ref={titleTopRef}>Индустриальный</span>{" "}
+            <span ref={titleFitRef} className="about__title-fit">лофт</span>
+          </h2>
           <p>
             «Фабрика» — ресторан и кальян-бар на Богданова, 86. Кирпичные стены, стальные балки, мотоцикл под потолком и мягкие диваны.
             Подходит для семейного ужина, дня рождения, деловой встречи или банкета.
           </p>
+        </div>
+        <div className="about__details">
           <ul className="facts">
             {facts.map((f, i) => (
               <li key={i}><b>{f.value}</b><span>{f.label}</span></li>
@@ -50,12 +73,8 @@ export default function About() {
             {TAGS.map((t) => <li key={t}>{t}</li>)}
           </ul>
         </div>
-        <div className="about__gallery">
-          {PHOTOS.map((p) => (
-            <figure key={p.src} className={`plate${p.tall ? " plate--tall" : ""}`}>
-              <img src={p.src} alt={p.alt} loading="lazy" />
-            </figure>
-          ))}
+        <div className="about__photos">
+          <PhotoStrip photos={PHOTOS} />
         </div>
       </div>
     </section>

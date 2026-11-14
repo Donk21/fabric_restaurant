@@ -237,9 +237,15 @@ a { color: inherit; }
 .section__head { max-width: 720px; margin-bottom: 36px; }
 
 /* ===== About ===== */
-.about { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 5vw, 70px); align-items: center; }
+.about { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 5vw, 70px); align-items: start; }
+.about__text > :last-child { margin-bottom: 0; }
+.about__details { display: grid; gap: 14px; }
+.about__photos { grid-column: 1 / -1; min-width: 0; }
 .about__text p { color: #cfcbc5; }
-.facts { list-style: none; padding: 0; margin: 28px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+/* Two-line title: the second word is scaled (via --fit, set in JS) to the first word's width */
+.about__title > span { display: block; width: max-content; }
+.about__title-fit { font-size: calc(1em * var(--fit, 2.6)); line-height: .9; color: var(--amber); }
+.facts { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
 .facts li { background: var(--graphite); padding: 18px 16px; }
 .facts b { display: block; font: 400 clamp(20px, 2.4vw, 28px)/1.1 var(--display); color: var(--amber); margin-bottom: 6px; }
 .facts span { font-size: 13px; color: var(--muted); line-height: 1.4; display: block; }
@@ -260,12 +266,10 @@ a { color: inherit; }
 }
 .tags li:last-child:nth-child(odd) { grid-column: 1 / -1; justify-content: center; }
 
-.about__gallery { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; height: clamp(380px, 46vw, 560px); }
 .plate {
   margin: 0; position: relative; overflow: hidden; border-radius: var(--radius);
   border: 1px solid var(--line); background: var(--steel);
 }
-.plate--tall { grid-row: span 2; }
 .plate img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
 .plate:hover img { transform: scale(1.05); }
 /* "Rivets" like on the logo's steel plate */
@@ -276,6 +280,86 @@ a { color: inherit; }
 }
 .plate::before { left: 10px; }
 .plate::after { right: 10px; }
+
+/* Photo strip: one photo in view, snap-scroll to the rest, a click opens the lightbox */
+.strip { --gap: 14px; }
+.strip__viewport { position: relative; }
+.strip__list {
+  /* position: relative makes the list the offsetParent, so item offsets ignore scroll */
+  position: relative; list-style: none; margin: 0; padding: 0;
+  display: flex; gap: var(--gap);
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+}
+.strip__list::-webkit-scrollbar { display: none; }
+.strip__item { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; }
+.strip__btn {
+  display: block; width: 100%; height: clamp(380px, 68vh, 620px); padding: 0;
+  cursor: zoom-in; font: inherit; color: inherit;
+}
+.strip__btn:focus-visible { outline-offset: 3px; }
+/* Desktop: whole photo in the center of a wide frame, blurred copy behind it */
+.strip__bg {
+  position: absolute; inset: -40px; width: calc(100% + 80px); height: calc(100% + 80px);
+  object-fit: cover; filter: blur(28px) brightness(.45) saturate(1.1);
+}
+.plate .strip__img { position: relative; object-fit: contain; }
+.plate:hover .strip__img { transform: scale(1.03); }
+.strip__zoom {
+  position: absolute; right: 14px; bottom: 14px; z-index: 1;
+  display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(17,18,19,.7); border: 1px solid var(--line); color: var(--text);
+  opacity: .75; transition: opacity .25s, transform .25s;
+}
+.strip__zoom svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.strip__btn:hover .strip__zoom, .strip__btn:focus-visible .strip__zoom { opacity: 1; transform: scale(1.08); }
+.strip__arrow {
+  position: absolute; top: 50%; z-index: 2; width: 48px; height: 48px; margin-top: -24px;
+  display: grid; place-items: center; padding: 0 0 5px;
+  background: rgba(35,38,42,.8); border: 1px solid var(--line); border-radius: 50%;
+  color: var(--text); font-size: 32px; line-height: 1; cursor: pointer;
+  transition: border-color .2s, color .2s, opacity .2s;
+}
+.strip__arrow--prev { left: 16px; }
+.strip__arrow--next { right: 16px; }
+.strip__arrow:hover:not(:disabled) { border-color: var(--amber); color: var(--amber-2); }
+.strip__arrow:disabled { opacity: 0; pointer-events: none; }
+.strip__dots { display: flex; justify-content: center; gap: 4px; margin-top: 10px; }
+.strip__dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.strip__dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: background .2s, transform .2s; }
+.strip__dot:hover::before { background: var(--muted); }
+.strip__dot.is-active::before { background: var(--amber); transform: scale(1.25); box-shadow: 0 0 6px rgba(233,161,74,.6); }
+
+/* ===== Lightbox ===== */
+.lightbox {
+  position: fixed; inset: 0; z-index: 110;
+  display: grid; grid-template-rows: 1fr auto;
+  background: rgba(8,8,9,.94); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  animation: fade .2s;
+}
+.lightbox__stage { display: grid; place-items: center; min-height: 0; padding: 64px clamp(16px, 8vw, 96px) 12px; }
+.lightbox__img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 20px 60px -20px rgba(0,0,0,.8);
+  animation: lightbox-in .3s both;
+}
+@keyframes lightbox-in { from { opacity: 0; transform: scale(.97); } }
+.lightbox__caption {
+  margin: 0 auto; max-width: 720px; padding: 4px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  text-align: center; font-size: 14px; line-height: 1.45; color: #cfcbc5;
+}
+.lightbox__count { display: block; margin-bottom: 4px; font: 400 13px/1 var(--display); letter-spacing: .12em; color: var(--amber); }
+.lightbox__arrow, .lightbox__close {
+  position: absolute; display: grid; place-items: center;
+  background: rgba(35,38,42,.75); border: 1px solid var(--line); color: var(--text);
+  cursor: pointer; line-height: 1; transition: border-color .2s, color .2s;
+}
+.lightbox__arrow:hover, .lightbox__close:hover { border-color: var(--amber); color: var(--amber-2); }
+.lightbox__arrow { top: 50%; width: 52px; height: 52px; margin-top: -26px; padding: 0 0 5px; border-radius: 50%; font-size: 34px; }
+.lightbox__arrow--prev { left: clamp(10px, 2vw, 28px); }
+.lightbox__arrow--next { right: clamp(10px, 2vw, 28px); }
+.lightbox__close { top: 14px; right: 14px; width: 44px; height: 44px; padding: 0 0 3px; border-radius: 50%; font-size: 30px; }
 
 /* ===== Menu ===== */
 .menu-search input {
@@ -554,7 +638,15 @@ a { color: inherit; }
   .field input:not([type="checkbox"]), .field select, .field textarea, .menu-search input { font-size: 16px; }
   .facts { grid-template-columns: 1fr; }
   .tags li { font-size: 13px; padding: 10px 12px; gap: 8px; }
-  .about__gallery { height: 420px; }
+  /* Phones: the strip bleeds to the screen edges; the photo itself fills a 3:4 card */
+  .strip__list { margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); scroll-padding-inline: var(--pad); }
+  .strip__btn { height: auto; aspect-ratio: 3 / 4; }
+  .strip__bg { display: none; }
+  .plate .strip__img { object-fit: cover; }
+  .strip__arrow { display: none; }
+  /* Swipe instead of arrows; the photo gets the full width */
+  .lightbox__arrow { display: none; }
+  .lightbox__stage { padding: 64px 10px 10px; }
   .hero__actions .btn { flex: 1 1 100%; }
   /* Category bar: chips on the first row, full-width search on the second */
   .menu-bar__inner { flex-wrap: wrap; gap: 10px; padding-block: 10px; }
