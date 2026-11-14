@@ -14,8 +14,10 @@ export default function Header({ page = "home" }) {
   const home = page === "home";
   const resolve = (href) => (home || !href.startsWith("#") ? href : `./${href}`);
 
+  // No id="top" on the header: it is sticky, so anchoring to it never scrolls.
+  // Without a matching element, href="#top" scrolls to the top of the document.
   return (
-    <header className="topbar" id="top">
+    <header className="topbar">
       <div className="wrap topbar__inner">
         <a href={home ? "#top" : "./"} className="brand" aria-label="Фабрика — на главную">
           <img src="assets/logo.jpg" alt="Логотип ресторана «Фабрика»" className="logo-img brand__logo" width="48" height="48" />

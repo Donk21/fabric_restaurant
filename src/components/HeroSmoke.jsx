@@ -17,8 +17,8 @@ const LAYERS = [
     ],
   },
   {
-    // Puff lit by turquoise neon, rising on the right
-    color: "#3de0e8",
+    // Puff lit by yellow neon, rising on the right
+    color: "#ffd23f",
     freq: "0.011 0.02",
     seed: 11,
     scale: 200,
